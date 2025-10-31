@@ -1,10 +1,9 @@
 package com.example.monzobank.service.Parser.parsingStrategy;
 
 import com.example.monzobank.entities.Url;
-
-import java.util.List;
+import com.example.monzobank.service.Parser.Parser;
 
 public interface ParsingStrategy {
 
-    public Url parse(String urlString);
+    Url parse(String urlString, Parser parser);
 }

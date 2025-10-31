@@ -33,6 +33,16 @@ public class UrlValidatorService {
         return url.matches(DOMAIN_REGEX);
     }
 
-
+    public boolean isValidLink(String url) {
+        return url != null && 
+               !url.isEmpty() && 
+               (url.startsWith("http://") || url.startsWith("https://")) &&
+               !url.contains("#") &&
+               !url.endsWith(".pdf") &&
+               !url.endsWith(".jpg") &&
+               !url.endsWith(".png") &&
+               !url.endsWith(".gif") &&
+               isValidUrl(url);
+    }
 }
 
