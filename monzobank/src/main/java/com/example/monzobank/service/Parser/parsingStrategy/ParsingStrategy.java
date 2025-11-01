@@ -5,5 +5,5 @@ import com.example.monzobank.service.Parser.Parser;
 
 public interface ParsingStrategy {
 
-    Url parse(String urlString, Parser parser);
+    Url parse(String urlString, Parser parser, int depth);
 }

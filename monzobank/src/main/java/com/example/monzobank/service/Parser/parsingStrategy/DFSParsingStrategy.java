@@ -16,26 +16,39 @@ public class DFSParsingStrategy implements ParsingStrategy {
     }
 
     @Override
-    public Url parse(String urlString, Parser parser) {
-        System.out.println("Parsing using DFS strategy for URL: " + urlString);
+    public Url parse(String urlString, Parser parser, int maxDepth) {
+        System.out.println("Parsing using DFS strategy for URL: " + urlString + " with depth: " + 
+                          (maxDepth == Integer.MAX_VALUE ? "UNLIMITED" : maxDepth));
         
-        Url rootUrl = new Url(urlString);
         Set<String> visited = new HashSet<>();
+        Url rootUrl = dfsRecursive(urlString, parser, visited, 0, maxDepth);
+        
+        System.out.println("DFS completed. Visited " + visited.size() + " total URLs");
+        return rootUrl;
+    }
+    
+    private Url dfsRecursive(String urlString, Parser parser, Set<String> visited, int currentDepth, int maxDepth) {
+        Url currentUrl = new Url(urlString);
         visited.add(urlString);
         
-        // DFS: Extract links from current page (1 level only)
+        // Stop if we've reached max depth or visited too many URLs
+        if (currentDepth >= maxDepth || visited.size() >= MAX_LINKS) {
+            return currentUrl;
+        }
+        
+        // Extract links from current page
         List<String> extractedLinks = parser.extractLinks(urlString);
         List<Url> childUrls = new ArrayList<>();
         
         for (String link : extractedLinks) {
-            if (urlValidatorService.isValidLink(link) && !visited.contains(link) && childUrls.size() < MAX_LINKS) {
-                childUrls.add(new Url(link));
-                visited.add(link);
+            if (urlValidatorService.isValidLink(link) && !visited.contains(link) && visited.size() < MAX_LINKS) {
+                // DFS: Immediately recurse into child (go deep first)
+                Url childUrl = dfsRecursive(link, parser, visited, currentDepth + 1, maxDepth);
+                childUrls.add(childUrl);
             }
         }
         
-        rootUrl.setChildUrls(childUrls);
-        System.out.println("DFS completed. Found " + childUrls.size() + " child URLs");
-        return rootUrl;
+        currentUrl.setChildUrls(childUrls);
+        return currentUrl;
     }
 }

@@ -9,44 +9,70 @@ import java.util.*;
 public class BFSParsingStrategy implements ParsingStrategy {
     
     private static final int MAX_LINKS = 50;
-    private final UrlValidatorService urlValidatorService;
 
-    public BFSParsingStrategy(UrlValidatorService urlValidatorService) {
-        this.urlValidatorService = urlValidatorService;
+    public BFSParsingStrategy() {
     }
 
     @Override
-    public Url parse(String urlString, Parser parser) {
-        System.out.println("Parsing using BFS strategy for URL: " + urlString);
+    public Url parse(String urlString, Parser parser, int maxDepth) {
+        System.out.println("Parsing using BFS strategy for URL: " + urlString + " with depth: " + 
+                          (maxDepth == Integer.MAX_VALUE ? "UNLIMITED" : maxDepth));
         
         Url rootUrl = new Url(urlString);
-        Queue<String> queue = new LinkedList<>();
+        Queue<UrlWithDepth> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
-        List<Url> allChildUrls = new ArrayList<>();
+        Map<String, Url> urlMap = new HashMap<>();
         
-        queue.offer(urlString);
+        queue.offer(new UrlWithDepth(urlString, 0));
         visited.add(urlString);
+        urlMap.put(urlString, rootUrl);
         
         // BFS: Process all nodes at current level before going deeper
-        int processedCount = 0;
-        while (!queue.isEmpty() && processedCount < 1) {
-            String currentUrl = queue.poll();
+        while (!queue.isEmpty() && visited.size() < MAX_LINKS) {
+            UrlWithDepth current = queue.poll();
+            String currentUrl = current.url;
+            int currentDepth = current.depth;
+            
+            // Stop if we've reached max depth
+            if (currentDepth >= maxDepth) {
+                continue;
+            }
             
             // Use parser's extractLinks (HTML/JSON agnostic)
             List<String> extractedLinks = parser.extractLinks(currentUrl);
+            List<Url> childUrls = new ArrayList<>();
             
             for (String link : extractedLinks) {
-                if (urlValidatorService.isValidLink(link) && !visited.contains(link) && allChildUrls.size() < MAX_LINKS) {
-                    allChildUrls.add(new Url(link));
+                if (UrlValidatorService.isValidLink(link) && !visited.contains(link) && visited.size() < MAX_LINKS) {
+                    Url childUrl = new Url(link);
+                    childUrls.add(childUrl);
                     visited.add(link);
+                    urlMap.put(link, childUrl);
+                    
+                    // Add to queue for further crawling
+                    queue.offer(new UrlWithDepth(link, currentDepth + 1));
                 }
             }
             
-            processedCount++;
+            // Set children for current URL
+            Url currentUrlObj = urlMap.get(currentUrl);
+            if (currentUrlObj != null) {
+                currentUrlObj.setChildUrls(childUrls);
+            }
         }
         
-        rootUrl.setChildUrls(allChildUrls);
-        System.out.println("BFS completed. Found " + allChildUrls.size() + " child URLs");
+        System.out.println("BFS completed. Visited " + visited.size() + " total URLs");
         return rootUrl;
+    }
+    
+    // Helper class to track URL with its depth
+    private static class UrlWithDepth {
+        String url;
+        int depth;
+        
+        UrlWithDepth(String url, int depth) {
+            this.url = url;
+            this.depth = depth;
+        }
     }
 }

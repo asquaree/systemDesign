@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ConcurrentParsingStrategy implements ParsingStrategy{
     @Override
-    public Url parse(String urlString, Parser parser) {
+    public Url parse(String urlString, Parser parser,int maxDepth) {
         // Implement concurrent parsing logic here
         return new Url(urlString);
     }
