@@ -1,6 +1,7 @@
 package com.example.monzobank.service.Parser;
 
 import com.example.monzobank.service.Parser.parsingStrategy.ParsingStrategy;
+import com.example.monzobank.service.UrlValidatorService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +24,7 @@ public class HtmlParser extends Parser {
     @Override
     public List<String> extractLinks(String urlString) {
         List<String> links = new ArrayList<>();
+        String baseDomain = UrlValidatorService.extractBaseDomain(urlString);
         
         for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
@@ -39,12 +41,12 @@ public class HtmlParser extends Parser {
                 
                 for (Element link : linkElements) {
                     String href = link.absUrl("href");
-                    if (href != null && !href.isEmpty()) {
+                    if (href != null && !href.isEmpty() && UrlValidatorService.isInternalLink(href, baseDomain)) {
                         links.add(href);
                     }
                 }
                 
-                System.out.println("Successfully extracted " + links.size() + " links from: " + urlString);
+                System.out.println("Successfully extracted " + links.size() + " internal links from: " + urlString);
                 break; // Success, exit retry loop
                 
             } catch (java.net.SocketTimeoutException e) {
