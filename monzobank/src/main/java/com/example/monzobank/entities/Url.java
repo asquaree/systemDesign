@@ -1,12 +1,12 @@
 package com.example.monzobank.entities;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
-
+@Data
+@NoArgsConstructor
 public class Url {
 
     private String url;
@@ -15,29 +15,5 @@ public class Url {
 
     public Url(String url) {
         this.url = url;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public List<Url> getChildUrls() {
-        return childUrls;
-    }
-
-    public void setChildUrls(List<Url> childUrls) {
-        this.childUrls = childUrls;
-    }
-
-    public int getNestingLevel() {
-        return nestingLevel;
-    }
-
-    public void setNestingLevel(int nestingLevel) {
-        this.nestingLevel = nestingLevel;
     }
 }
