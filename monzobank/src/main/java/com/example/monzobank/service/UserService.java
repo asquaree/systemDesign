@@ -77,4 +77,9 @@ public class UserService {
             return ResponseEntity.internalServerError().body(false);
         }
     }
+
+    public ResponseEntity<java.util.List<String>> suggestUrls(String query) {
+        return UrlSuggestService.suggestUrls(query);
+    }
+
 }
