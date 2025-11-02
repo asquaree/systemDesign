@@ -36,6 +36,8 @@ public class UrlCacheManager {
     }
 
     public synchronized void cacheUrl(Url url) {
+
+        log.info("Caching URL: {}", url.getUrl());
         String urlString = url.getUrl();
 
         if (cachedUrls.containsKey(urlString)) {
@@ -52,20 +54,20 @@ public class UrlCacheManager {
         // Add to end of queue (most recently used)
         lruQueue.addLast(urlString);
 
-        log.debug("Cached URL: {} (Cache size: {})", urlString, cachedUrls.size());
+        log.info("Cached URL: {} )", urlString);
     }
 
     public synchronized Url isUrlCached(String url) {
-        log.debug("Checking cache for URL: {}", url);
+        log.info("Checking cache for URL: {}", url);
 
         Url cachedUrl = cachedUrls.get(url);
 
         if (cachedUrl != null) {
             lruQueue.remove(url);
             lruQueue.addLast(url);
-            log.debug("Cache HIT: {} (moved to end of LRU queue)", url);
+            log.info("Cache HIT: {} (moved to end of LRU queue)", url);
         } else {
-            log.debug("Cache MISS: {}", url);
+            log.info("Cache MISS: {}", url);
         }
 
         return cachedUrl;

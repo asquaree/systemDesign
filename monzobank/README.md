@@ -2,12 +2,40 @@
 
 A scalable web crawler built with Spring Boot that crawls websites and tracks visited URLs per user.
 
+# Functional Requirements
+
+1. **URL Search** – Allow users to input and search URLs.
+2. **Domain Validation** – Verify if the given domain is valid and reachable.
+3. **Search Suggestions** – Suggest similar or related URLs during search input.
+4. **Page Parsing** – Parse web pages and extract subdomains.
+5. **Cache Check** – Before parsing, check if domain data exists in cache (e.g., Redis).
+6. **Visited Tracking** – Maintain a list of subdomains visited by each user.
+7. **Update Visits** – Mark subdomains as visited when clicked, storing timestamp.
+8. **Subdomain Filtering** – Remove or ignore invalid/non-child subdomains.
+9. **User Data Storage** – Securely store user information and interaction history.
+10. **Concurrent Parsing** – Support parallel webpage parsing for performance.
+
+# Non-Functional Requirements
+
+1. **Performance** – Efficiently crawl and process pages with low latency.
+2. **Scalability** – Handle large sub-URL volumes and multiple concurrent users.
+3. **Consistency** – Maintain accurate and ordered sub-URL results.
+4. **Availability** – Ensure high uptime and continuous system operation.
+5. **Reliability** – Deliver correct results under varying load conditions.
+6. **Fault Tolerance** – Recover gracefully from partial service failures.
+7. **Durability** – Persist critical data (users, cache, visited URLs) reliably.
+8. **Microservices Architecture** – Use separate services (e.g., validator, crawler, cache).
+9. **Load Balancing** – Distribute traffic evenly across system instances.
+
+## High level Overview
+![img.png](img.png)
 ## Features
 
 - **Multi-Strategy Crawling**: BFS, DFS, and Concurrent parsing strategies
 - **Multi-Format Support**: HTML and JSON parsers (extensible)
 - **User-Specific Tracking**: Track which URLs each user has visited
 - **In-Memory Caching**: Fast URL lookup with nested structure caching
+- **LRU Cache Eviction**: Configurable cache size with LRU policy
 - **Internal Link Filtering**: Only crawls links within the same domain
 - **Configurable Depth**: Crawl with unlimited or specified depth levels
 - **Retry Logic**: Automatic retry with exponential backoff for timeouts
@@ -27,7 +55,7 @@ A scalable web crawler built with Spring Boot that crawls websites and tracks vi
 ### Design Patterns
 
 1. **Singleton Pattern**: In-memory cache manager
-2. **Strategy Pattern**: Pluggable parsing strategies (BFS/DFS/Concurrent)
+2. **Strategy Pattern**: Pluggable parsing strategies (BFS/DFS/Concurrent) and Caching strategies like LRU, LFU
 2. **Factory Pattern**: Parser creation based on content type
 3. **Template Method**: Abstract Parser with concrete implementations
 
@@ -200,23 +228,10 @@ Configured in parsing strategies:
 - `TIMEOUT_MS = 20000` - HTTP connection timeout (20s)
 - `MAX_RETRIES = 3` - Retry attempts on timeout
 
-## How It Works
-
-1. **Request arrives** at `UserController`
-2. **UserService validates** user and delegates to `UrlSearchService`
-3. **UrlSearchService checks cache** - if hit, returns flattened URLs
-4. **If cache miss**:
-   - Creates Parser with chosen strategy (BFS/DFS)
-   - Parser extracts links using `HtmlParser`
-   - Strategy builds nested URL tree (for caching)
-   - Tree is cached for future use
-   - Tree is flattened for response
-5. **Mapper adds visit status** from user's history
-6. **Response returned** to client
-
 
 ## Future Enhancements
 
+- [ ] DFS parsing strategy implementation both concurrent and sequential
 - [ ] Add Redis for distributed caching
 - [ ] Implement Elasticsearch for URL search
 - [ ] Add rate limiting
@@ -226,4 +241,8 @@ Configured in parsing strategies:
 - [ ] Add metrics and monitoring
 - [ ] Implement pagination for large result sets
 - [ ] Add authentication/authorization
+- [ ] Dockerize the application
+- [ ] LRU/LFU cache strategy selection
+- [ ] Add more parsers (XML, PDF, etc.)
+- [ ] Implement a web UI for easier interaction
 
