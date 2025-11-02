@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class BFSParsingStrategy implements ParsingStrategy {
 
     private static final Logger logger = LoggerFactory.getLogger(BFSParsingStrategy.class);
-    private static final int MAX_LINKS = 50;
+    private static final int MAX_LINKS = 100;
 
     private final Executor executor;
     private Parser parser;
@@ -166,6 +166,7 @@ public class BFSParsingStrategy implements ParsingStrategy {
     // ==================== URL Processing ====================
 
     private List<Url> processUrl(String urlString, int depth, int maxDepth) {
+        logger.info("Processing URL: {} at depth: {}", urlString, depth);
         if (!canProcessUrl(depth, maxDepth)) {
             return null;
         }
