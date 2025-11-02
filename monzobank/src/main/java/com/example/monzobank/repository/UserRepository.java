@@ -2,6 +2,8 @@ package com.example.monzobank.repository;
 
 import com.example.monzobank.entities.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -10,6 +12,7 @@ import java.util.Map;
 
 @Slf4j
 @Repository
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class UserRepository {
 
     private final HashMap<String, User> userMap = new HashMap<>();
