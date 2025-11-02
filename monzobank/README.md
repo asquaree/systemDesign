@@ -22,7 +22,6 @@ A scalable web crawler built with Spring Boot that crawls websites and tracks vi
 3. **Consistency** – Maintain accurate and ordered sub-URL results.
 4. **Availability** – Ensure high uptime and continuous system operation.
 5. **Reliability** – Deliver correct results under varying load conditions.
-6. **Fault Tolerance** – Recover gracefully from partial service failures.
 7. **Durability** – Persist critical data (users, cache, visited URLs) reliably.
 8. **Microservices Architecture** – Use separate services (e.g., validator, crawler, cache).
 9. **Load Balancing** – Distribute traffic evenly across system instances.
@@ -175,11 +174,7 @@ Pre-cached for testing:
 ### Build and Run
 
 ```bash
-# Using Maven wrapper (recommended)
-./mvnw clean install
-./mvnw spring-boot:run
-
-# Or with Maven
+ Maven
 mvn clean install
 mvn spring-boot:run
 ```
