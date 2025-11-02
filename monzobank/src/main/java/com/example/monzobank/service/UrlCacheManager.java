@@ -1,6 +1,7 @@
 package com.example.monzobank.service;
 
 import com.example.monzobank.entities.Url;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class UrlCacheManager {
@@ -34,7 +36,7 @@ public class UrlCacheManager {
     }
     
     public Url isUrlCached(String url) {
-        System.out.println("Checking cache for URL: " + url);
+        log.debug("Checking cache for URL: {}", url);
         return cachedUrls.get(url);
     }
 }

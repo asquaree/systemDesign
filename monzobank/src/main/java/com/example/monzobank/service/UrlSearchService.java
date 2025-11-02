@@ -4,12 +4,13 @@ import com.example.monzobank.entities.Url;
 import com.example.monzobank.service.Parser.ParseFactory;
 import com.example.monzobank.service.Parser.Parser;
 import com.example.monzobank.service.Parser.parsingStrategy.BFSParsingStrategy;
-import com.example.monzobank.service.Parser.parsingStrategy.DFSParsingStrategy;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Slf4j
 @Service
 public class UrlSearchService {
 
@@ -28,7 +29,7 @@ public class UrlSearchService {
 
             Url cachedUrl = cacheManager.isUrlCached(url);
             if (cachedUrl != null) {
-                System.out.println("URL found in cache: " + url);
+                log.info("Cache hit for URL: {}", url);
                 
                 // Flatten cached URL before returning
                 Url flattenedCached = new Url(url);
@@ -36,11 +37,13 @@ public class UrlSearchService {
                 return flattenedCached;
             }
 
+            log.info("Cache miss for URL: {}, starting crawl", url);
             Parser parser = ParseFactory.getParser("html", new BFSParsingStrategy());
             Url parsedChildUrls = parser.parse(url);
 
             if (parsedChildUrls != null) {
                 cacheManager.cacheUrl(parsedChildUrls);  // Cache nested structure
+                log.info("Successfully crawled and cached URL: {}", url);
                 
                 // Flatten before returning
                 Url flattenedResult = new Url(url);
@@ -51,7 +54,7 @@ public class UrlSearchService {
             }
 
         } catch (Exception e) {
-            System.err.println("Error searching URL: " + e.getMessage());
+            log.error("Error searching URL: {} - {}", url, e.getMessage(), e);
             return null;
         }
     }

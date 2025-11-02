@@ -1,12 +1,14 @@
 package com.example.monzobank.repository;
 
 import com.example.monzobank.entities.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Repository
 public class UserRepository {
 
@@ -52,38 +54,36 @@ public class UserRepository {
 
 
     public User findByEmail(String email) {
-
-        if(userMap!=null) {
-            return userMap.get(email);
-        } else {
-            return null;
+        if (userMap != null) {
+            User user = userMap.get(email);
+            if (user != null) {
+                log.debug("User found: {}", email);
+            } else {
+                log.debug("User not found: {}", email);
+            }
+            return user;
         }
+        return null;
     }
 
     public Boolean markUrlsAsVisited(String parentUrl, String childUrl, String userEmail) {
-
         User user = userMap.get(userEmail);
 
-        if(user == null) {
+        if (user == null) {
+            log.warn("Cannot mark URL as visited - user not found: {}", userEmail);
             return false;
         }
 
         HashMap<String, Map<String, LocalDateTime>> urlLastAccessTime = user.getUrlLastAccessTime();
-
         Map<String, LocalDateTime> childUrlAccessMap = urlLastAccessTime.getOrDefault(parentUrl, new HashMap<>());
-
+        
         childUrlAccessMap.put(childUrl, LocalDateTime.now());
-
         urlLastAccessTime.put(parentUrl, childUrlAccessMap);
-
         user.setUrlLastAccessTime(urlLastAccessTime);
-
         userMap.put(userEmail, user);
-
+        
+        log.info("Marked URL as visited - Parent: {}, Child: {}, User: {}", parentUrl, childUrl, userEmail);
         return true;
-
-
-
     }
 
 }
