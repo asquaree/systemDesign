@@ -31,11 +31,13 @@ public class UrlCacheManager {
     }
 
 
-    public void cacheUrl(Url url) {
+    // synchronized methods to ensure thread safety
+    public synchronized void cacheUrl(Url url) {
         cachedUrls.put(url.getUrl(),url);
     }
-    
-    public Url isUrlCached(String url) {
+
+    // synchronized method to check if URL is cached
+    public synchronized Url isUrlCached(String url) {
         log.debug("Checking cache for URL: {}", url);
         return cachedUrls.get(url);
     }

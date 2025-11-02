@@ -6,19 +6,22 @@ import com.example.monzobank.service.Parser.Parser;
 import com.example.monzobank.service.Parser.parsingStrategy.BFSParsingStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.Executor;
 
 @Slf4j
 @Service
 public class UrlSearchService {
 
-
-
     @Autowired
     private UrlCacheManager cacheManager;
 
+    @Autowired
+    @Qualifier("crawlTaskExecutor")
+    private Executor crawlExecutor;
 
     public Url searchUrl(String url) {
 
@@ -38,7 +41,8 @@ public class UrlSearchService {
             }
 
             log.info("Cache miss for URL: {}, starting crawl", url);
-            Parser parser = ParseFactory.getParser("html", new BFSParsingStrategy());
+            // Pass executor to strategy for parallel processing at strategy level
+            Parser parser = ParseFactory.getParser("html", new BFSParsingStrategy(crawlExecutor));
             Url parsedChildUrls = parser.parse(url);
 
             if (parsedChildUrls != null) {

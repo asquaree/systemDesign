@@ -38,6 +38,7 @@ public class UserService {
                 return ResponseEntity.notFound().build();
             }
 
+            // you can also implement concurrency here by processing multiple search requests in parallel if needed
             Url urlWithChildren = urlSearchService.searchUrl(url);
             
             if (urlWithChildren == null) {
