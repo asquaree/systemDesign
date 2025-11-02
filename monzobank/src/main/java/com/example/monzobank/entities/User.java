@@ -11,4 +11,9 @@ public class User {
 
     private String email;
     private HashMap<String, Map<String, LocalDateTime>> urlLastAccessTime;
+
+    public User(String email) {
+        this.email = email;
+        this.urlLastAccessTime = new HashMap<>();
+    }
 }

@@ -13,15 +13,11 @@ import java.util.Map;
 public class ChildUrlResponseMapper {
 
     public static CrawlResponseModel mapChildUrlsToResponseModel(String url, Url urlWithChildren, User user) {
-        CrawlResponseModel childUrlResponse = new CrawlResponseModel();
         List<UrlVistedModel> childUrlModels = new ArrayList<>();
 
         // Null safety checks
         if (urlWithChildren == null || urlWithChildren.getChildUrls() == null) {
-            childUrlResponse.setUrl(url);
-            childUrlResponse.setChildUrls(childUrlModels);
-            childUrlResponse.setUser(user);
-            return childUrlResponse;
+            return new CrawlResponseModel(url, childUrlModels, user);
         }
 
         List<Url> childUrls = urlWithChildren.getChildUrls();
@@ -50,10 +46,6 @@ public class ChildUrlResponseMapper {
             childUrlModels.add(urlVistedModel);
         }
 
-        childUrlResponse.setUrl(url);
-        childUrlResponse.setChildUrls(childUrlModels);
-        childUrlResponse.setUser(user);
-
-        return childUrlResponse;
+        return new CrawlResponseModel(url, childUrlModels, user);
     }
 }

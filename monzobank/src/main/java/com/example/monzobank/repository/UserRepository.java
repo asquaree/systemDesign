@@ -20,9 +20,8 @@ public class UserRepository {
     // Initialize test users
     {
         // User 1: aakash@gmail.com
-        User user1 = new User();
-        user1.setEmail("aakash@gmail.com");
-        HashMap<String, Map<String, LocalDateTime>> urlHistory1 = new HashMap<>();
+        User user1 = new User("aakash@gmail.com");
+        HashMap<String, Map<String, LocalDateTime>> urlHistory1 = user1.getUrlLastAccessTime();
         
         Map<String, LocalDateTime> ianaVisited = new HashMap<>();
         ianaVisited.put("https://www.iana.org/protocols", LocalDateTime.of(2024, 6, 1, 10, 0));
@@ -34,23 +33,20 @@ public class UserRepository {
         googleVisited.put("https://www.google.com/maps", LocalDateTime.of(2024, 6, 3, 14, 20));
         urlHistory1.put("https://www.google.com/", googleVisited);
         
-        user1.setUrlLastAccessTime(urlHistory1);
         userMap.put(user1.getEmail(), user1);
 
         // User 2
-        User user2 = new User();
-        user2.setEmail("karan@example.com");
+        User user2 = new User("karan@example.com");
+        userMap.put(user2.getEmail(), user2);
         
         // User 3
-        User user3 = new User();
-        user3.setEmail("aayush@test.com");
-        HashMap<String, Map<String, LocalDateTime>> urlHistory3 = new HashMap<>();
+        User user3 = new User("aayush@test.com");
+        HashMap<String, Map<String, LocalDateTime>> urlHistory3 = user3.getUrlLastAccessTime();
         
         Map<String, LocalDateTime> githubVisited = new HashMap<>();
         githubVisited.put("https://github.com/explore", LocalDateTime.of(2024, 6, 7, 16, 45));
         urlHistory3.put("https://github.com/", githubVisited);
         
-        user3.setUrlLastAccessTime(urlHistory3);
         userMap.put(user3.getEmail(), user3);
     }
 

@@ -29,7 +29,7 @@ public class UrlValidatorService {
             "^(https?://)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(/.*)?$";
 
     public static boolean isValidDomainFormat(String url) {
-        return url.matches(DOMAIN_REGEX);
+        return url != null && !url.isEmpty() && url.matches(DOMAIN_REGEX);
     }
 
     public static boolean isValidLink(String url) {
