@@ -9,10 +9,8 @@ import java.util.*;
 public class DFSParsingStrategy implements ParsingStrategy {
     
     private static final int MAX_LINKS = 50;
-    private final UrlValidatorService urlValidatorService;
 
-    public DFSParsingStrategy(UrlValidatorService urlValidatorService) {
-        this.urlValidatorService = urlValidatorService;
+    public DFSParsingStrategy() {
     }
 
     @Override
@@ -41,7 +39,7 @@ public class DFSParsingStrategy implements ParsingStrategy {
         List<Url> childUrls = new ArrayList<>();
         
         for (String link : extractedLinks) {
-            if (urlValidatorService.isValidLink(link) && !visited.contains(link) && visited.size() < MAX_LINKS) {
+            if (UrlValidatorService.isValidLink(link) && !visited.contains(link) && visited.size() < MAX_LINKS) {
                 // DFS: Immediately recurse into child (go deep first)
                 Url childUrl = dfsRecursive(link, parser, visited, currentDepth + 1, maxDepth);
                 childUrls.add(childUrl);

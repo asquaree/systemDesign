@@ -10,40 +10,80 @@ import java.util.Map;
 @Repository
 public class UserRepository {
 
-    User user1;
+    private final HashMap<String, User> userMap = new HashMap<>();
 
-
-
+    // Initialize test users
     {
-        HashMap<String, Map<String, LocalDateTime>> urlLastAccessTime = new HashMap<>();
-        Map<String, LocalDateTime> urlAccessTimeMap = new HashMap<>();
-        user1 = new User();
-
-        urlAccessTimeMap.put("www.google.com/home", LocalDateTime.now());
-        urlLastAccessTime.put("www.google.com", urlAccessTimeMap);
+        // User 1: aakash@gmail.com
+        User user1 = new User();
         user1.setEmail("aakash@gmail.com");
-        user1.setUrlLastAccessTime(urlLastAccessTime);
+        HashMap<String, Map<String, LocalDateTime>> urlHistory1 = new HashMap<>();
+        
+        Map<String, LocalDateTime> ianaVisited = new HashMap<>();
+        ianaVisited.put("https://www.iana.org/protocols", LocalDateTime.of(2024, 6, 1, 10, 0));
+        ianaVisited.put("https://www.iana.org/domains/root", LocalDateTime.of(2024, 6, 2, 11, 30));
+        urlHistory1.put("https://www.iana.org/", ianaVisited);
+        
+        Map<String, LocalDateTime> googleVisited = new HashMap<>();
+        googleVisited.put("https://www.google.com/search", LocalDateTime.of(2024, 6, 3, 14, 15));
+        googleVisited.put("https://www.google.com/maps", LocalDateTime.of(2024, 6, 3, 14, 20));
+        urlHistory1.put("https://www.google.com/", googleVisited);
+        
+        user1.setUrlLastAccessTime(urlHistory1);
+        userMap.put(user1.getEmail(), user1);
 
-        HashMap<String, Map<String, LocalDateTime>> urlLastAccessTime2 = new HashMap<>();
-
-        Map<String, LocalDateTime> urlAccessTimeMap2 = new HashMap<>();
-
-        user1 = new User();
-
-        urlAccessTimeMap2.put("https://www.iana.org/protocols", LocalDateTime.of(2024, 6, 1, 10, 0));
-        urlAccessTimeMap2.put("https://www.iana.org/domains/root", LocalDateTime.of(2024, 6, 2, 11, 30));
-        urlLastAccessTime2.put("https://www.iana.org/", urlAccessTimeMap2);
-        user1.setEmail("aakash@gmail.com");
-        user1.setUrlLastAccessTime(urlLastAccessTime2);
+        // User 2
+        User user2 = new User();
+        user2.setEmail("karan@example.com");
+        
+        // User 3
+        User user3 = new User();
+        user3.setEmail("aayush@test.com");
+        HashMap<String, Map<String, LocalDateTime>> urlHistory3 = new HashMap<>();
+        
+        Map<String, LocalDateTime> githubVisited = new HashMap<>();
+        githubVisited.put("https://github.com/explore", LocalDateTime.of(2024, 6, 7, 16, 45));
+        urlHistory3.put("https://github.com/", githubVisited);
+        
+        user3.setUrlLastAccessTime(urlHistory3);
+        userMap.put(user3.getEmail(), user3);
     }
 
 
 
     public User findByEmail(String email) {
-        if (user1.getEmail().equals(email)) {
-            return user1;
+
+        if(userMap!=null) {
+            return userMap.get(email);
+        } else {
+            return null;
         }
-        return null;
+    }
+
+    public Boolean markUrlsAsVisited(String parentUrl, String childUrl, String userEmail) {
+
+        User user = userMap.get(userEmail);
+
+        if(user == null) {
+            return false;
+        }
+
+        HashMap<String, Map<String, LocalDateTime>> urlLastAccessTime = user.getUrlLastAccessTime();
+
+        Map<String, LocalDateTime> childUrlAccessMap = urlLastAccessTime.getOrDefault(parentUrl, new HashMap<>());
+
+        childUrlAccessMap.put(childUrl, LocalDateTime.now());
+
+        urlLastAccessTime.put(parentUrl, childUrlAccessMap);
+
+        user.setUrlLastAccessTime(urlLastAccessTime);
+
+        userMap.put(userEmail, user);
+
+        return true;
+
+
+
     }
 
 }

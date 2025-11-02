@@ -1,7 +1,6 @@
 package com.example.monzobank.service;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.net.URL;
 
